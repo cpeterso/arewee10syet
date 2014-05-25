@@ -40,11 +40,11 @@ var $index = (function(){
                         style = "success";
                         fragment = goodAddons;
                     } else if (addon.compatible === null) {
-                        compatible = "untested";
+                        compatible = "not tested";
                         style = "warning";
                         fragment = untestedAddons;
                     } else {
-                        compatible = "no";
+                        compatible = "not yet";
                         style = "danger";
                         fragment = badAddons;
                     }

@@ -25,9 +25,8 @@ bugzilla.getBug(678223, function(error, bug) {
             var bugIDs = [];
             var bugToAddonMap = {};
             var rows = $gdata.parseSpreadsheet(json);
-            var addons = [];
 
-            for (var row of rows) {
+            var addons = _.map(rows, function(row) {
                 // e.g. "bug: 1002880, reason: AMO #8, amourl: https://addons.mozilla.org/en-US/firefox/addon/wot-safe-browsing-tool"
                 var name = row.title;
                 var tier = +row.tier;
@@ -61,8 +60,9 @@ bugzilla.getBug(678223, function(error, bug) {
                 if (bug) {
                     bugToAddonMap[bug] = addon;
                 }
-                addons.push(addon);
-            }
+
+                return addon;
+            });
 
             var bugzilla = bz.createClient();
             bugzilla.searchBugs({id:bugIDs}, function(error, bugs) {
@@ -70,7 +70,7 @@ bugzilla.getBug(678223, function(error, bug) {
                     console.error(error);
                     alert(error);
                 } else {
-                    for (var bug of bugs) {
+                    _.forEach(bugs, function(bug) {
                         var addon = bugToAddonMap[bug.id];
                         if (bug.status === "RESOLVED") {
                             switch (bug.resolution) {
@@ -90,7 +90,7 @@ bugzilla.getBug(678223, function(error, bug) {
                         } else {
                             addon.compatible = false;
                         }
-                    }
+                    });
                 }
                 callback(error, addons);
             });

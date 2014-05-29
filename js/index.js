@@ -30,9 +30,9 @@ var $index = (function(){
                     return a.name < b.name ? -1 : (a.name === b.name ? 0 : 1);
                 });
 
-                for (var addon of addons) {
+                _.forEach(addons, function(addon) {
                     if (addon.tier > 1 && addon.compatible === null) {
-                        continue; // XXX
+                        return; // XXX
                     }
 
                     if (addon.compatible) {
@@ -78,7 +78,7 @@ var $index = (function(){
                     }
 
                     fragment.appendChild(tr);
-                }
+                });
 
                 var tbody = document.getElementById("tbody");
                 tbody.appendChild(goodAddons);

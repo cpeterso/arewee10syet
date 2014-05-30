@@ -1,6 +1,6 @@
 "use strict";
 
-var $gdata = (function(){
+var $gdata = (function() {
     return {
         parseSpreadsheet: function(json) {
             var entries = json.feed.entry || [];

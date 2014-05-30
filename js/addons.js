@@ -1,23 +1,6 @@
 "use strict";
 
-var $addons = (function(){
-    /*
-       var bugzilla = bz.createClient({
-  url: "https://api-dev.bugzilla.mozilla.org/test/0.9/",
-  username: 'bugs@bugmail.com',
-  password: 'secret',
-  timeout: 30000
-});
-
-    var bugzilla = bz.createClient();
-bugzilla.getBug(678223, function(error, bug) {
-  if (!error) {
-    alert(bug.summary);
-  }
-});
-
-*/
-
+var $addons = (function() {
     return {
         parseSpreadsheet: function(json, callback) {
             var bugURL;

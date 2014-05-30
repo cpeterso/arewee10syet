@@ -19,7 +19,7 @@ var $addons = (function() {
                 compatible = null;
                 var bug = row["bug"];
                 if (typeof bug !== "undefined") {
-                    bugURL = "https://bugzilla.mozilla.org/show_bug.cgi?id=" + bug;
+                    bugURL = $bugz.getURL(bug);
                     bug = +bug;
                     if (bug > 0) {
                         bugIDs.push(bug);
@@ -47,31 +47,32 @@ var $addons = (function() {
                 return addon;
             });
 
-            var bugzilla = bz.createClient();
-            bugzilla.searchBugs({id:bugIDs}, function(error, bugs) {
+            var searchParams = {
+                id: bugIDs,
+                include_fields: "id, resolution",
+            };
+
+            $bugz.searchBugs(searchParams, function(error, bugs) {
                 if (error) {
                     console.error(error);
                     alert(error);
                 } else {
                     _.forEach(bugs, function(bug) {
                         var addon = bugToAddonMap[bug.id];
-                        if (bug.status === "RESOLVED") {
-                            switch (bug.resolution) {
-                                case "FIXED":
-                                case "WORKSFORME":
-                                    addon.compatible = true;
-                                    break;
-                                case "INVALID":
-                                case "DUPLICATE":
-                                case "INCOMPLETE":
-                                default:
-                                    console.error("Bug " + bug.id + " has unexpected resolution: " + bug.resolution);
-                                case "WONTFIX":
-                                    addon.compatible = false;
-                                    break;
-                            }
-                        } else {
-                            addon.compatible = false;
+                        switch (bug.resolution) {
+                            case $bugz.resolution.FIXED:
+                            case $bugz.resolution.WORKSFORME:
+                                addon.compatible = true;
+                                break;
+                            default:
+                                console.error("Bug " + bug.id + " has unexpected resolution: " + bug.resolution);
+                            case $bugz.resolution.DUPLICATE:
+                            case $bugz.resolution.INVALID:
+                            case $bugz.resolution.INCOMPLETE:
+                            case $bugz.resolution.NONE:
+                            case $bugz.resolution.WONTFIX:
+                                addon.compatible = false;
+                                break;
                         }
                     });
                 }

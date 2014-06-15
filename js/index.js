@@ -1,6 +1,7 @@
 "use strict";
 
 var $index = (function(){
+var $index = (function() {
     return {
         onSpreadsheet: function(json) {
             function createElement(tag, child) {
@@ -31,21 +32,22 @@ var $index = (function(){
                 });
 
                 _.forEach(addons, function(addon) {
+                    // Display all tier 1 addons, but only tier 2 and 3 addons that are known compatible or incompatible.
                     if (addon.tier > 1 && addon.compatible === null) {
                         return; // XXX
                     }
 
                     if (addon.compatible) {
                         compatible = "yes";
-                        style = "success";
+                        style = "success"; // green
                         fragment = goodAddons;
                     } else if (addon.compatible === null) {
                         compatible = "not tested";
-                        style = "warning";
+                        style = "warning"; // yellow
                         fragment = untestedAddons;
                     } else {
                         compatible = "not yet";
-                        style = "danger";
+                        style = "danger"; // red
                         fragment = badAddons;
                     }
 
@@ -86,5 +88,5 @@ var $index = (function(){
                 tbody.appendChild(untestedAddons);
             });
         }
-    }
+    };
 })();

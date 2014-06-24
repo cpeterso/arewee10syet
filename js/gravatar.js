@@ -1,8 +1,6 @@
-"use strict";
+;(function() {
+    "use strict";
 
-// http://en.gravatar.com/site/implement/images/
-
-var $gravatar = (function() {
     // http://jquerymy.com/js/md5.js
     var md5 = (function(){function e(e,t){var o=e[0],u=e[1],a=e[2],f=e[3];o=n(o,u,a,f,t[0],7,-680876936);f=n(f,o,u,a,t[1],
         12,-389564586);a=n(a,f,o,u,t[2],17,606105819);u=n(u,a,f,o,t[3],22,-1044525330);o=n(o,u,a,f,t[4],7,-176418897);f=n(f,o,u,a,t[5],
@@ -32,7 +30,7 @@ var $gravatar = (function() {
         function d(e){return h(o(unescape(encodeURIComponent(e))))}
         function m(e,t){return e+t&4294967295}var a="0123456789abcdef".split("");return d})();
 
-    return {
+    exports.$gravatar = {
         defaults: {
             BLANK: "blank",
             HTTP404: "404",
@@ -97,4 +95,4 @@ var $gravatar = (function() {
             return baseURL + hash + extension + query;
         }
     };
-})();
+})(this);

@@ -1,7 +1,7 @@
-"use strict";
+;(function(exports) {
+    "use strict";
 
-var $addons = (function() {
-    return {
+    exports.$addons = {
         parseSpreadsheet: function(json, callback) {
             var bugURL;
             var compatible;
@@ -80,4 +80,4 @@ var $addons = (function() {
             });
         }
     };
-})();
+})(this);

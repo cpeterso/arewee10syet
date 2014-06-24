@@ -1,7 +1,7 @@
-"use strict";
+;(function(exports) {
+    "use strict";
 
-var $gdata = (function() {
-    return {
+    exports.$gdata = {
         parseSpreadsheet: function(json) {
             var entries = json.feed.entry || [];
             return _.map(entries, function(entry) {
@@ -19,4 +19,4 @@ var $gdata = (function() {
             });
         }
     };
-})();
+})(this);

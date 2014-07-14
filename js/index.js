@@ -1,6 +1,5 @@
 "use strict";
 
-var $index = (function(){
 var $index = (function() {
     return {
         onSpreadsheet: function(json) {

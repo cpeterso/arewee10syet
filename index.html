@@ -18,17 +18,20 @@
         <script src="https://spreadsheets.google.com/feeds/list/1CXdwQqNm5nqBDDfZcEoG90SLHAtb-mfMH4eAjDrFAMY/2/public/values?alt=json-in-script&amp;callback=$index.onSpreadsheet" defer></script>
         </head>
     <body>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <h1>Are your add-ons e10s compatible?</h1>
             <p>To test an add-on:</p>
             <ol>
                 <li><a href="https://nightly.mozilla.org/">Install Firefox Nightly</a>.</li>
-                <li>Confirm that the add-on works in Firefox Nightly as expected.</li>
-                <li>Use the File menu or "hamburger" toolbar button to open a new e10s window.</li>
-                <li>Confirm that the add-on still works in the e10s window as expected.</li>
+                <li>Install the add-on you would like to test.</li>
+                <li>e10s is disabled by default. Confirm that the add-on works in Firefox Nightly as expected <i>before</i> enabling e10s.</li>
+                <li>Now enable e10s by setting the <a href="http://kb.mozillazine.org/About:config">about:config</a> pref <tt>browser.tabs.remote.autostart</tt> to true.</li>
+                <li>Restart Firefox Nightly. When e10s is enabled, Firefox's tab titles will be <u>underlined</u>.</li>
+                <li>Confirm that the add-on still works as expected with e10s.</li>
+                <li>If you would like to disable e10s, reset the <a href="http://kb.mozillazine.org/About:config">about:config</a> pref <tt>browser.tabs.remote.autostart</tt> to false and restart Firefox.</li>
             </ol>
-            <p><b>If the add-on works as expected,</b> then click the add-on's "it works" link below to tell Mozilla!</p>
-            <p><b>If the add-on behaves differently in the e10s window,</b> then click the add-on's "Report bug" link below. Please include a description of what you <i>expected</i> to happen, what actually happened, and steps to reproduce the problem.</p>
+            <p><b>If the add-on works as expected,</b> click the add-on's "it works" link below to tell Mozilla!</p>
+            <p><b>If the add-on does not work as expected with e10s,</b> click the add-on's "Report bug" link below. Please include a description of what you <i>expected</i> to happen, what actually happened, and steps to reproduce the problem.</p>
         </div>
         <div class="col-md-7">
             <table class="table table-hover">

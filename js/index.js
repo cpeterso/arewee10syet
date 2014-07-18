@@ -36,70 +36,85 @@ var $index = (function() {
                 });
             }
 
-            $addons.parseSpreadsheet(json, function(error, addons) {
-                var compatible, fragment, style;
-                var goodAddonsFragment = document.createDocumentFragment();
-                var badAddonsFragment = document.createDocumentFragment();
-                var untestedAddonsFragment = document.createDocumentFragment();
-
-                shuffleArray(addons);
-                //sortByName(addons);
-
-                _.forEach(addons, function(addon) {
-                    // Display all tier 1 and 2 addons, but only tier 3 addons that are known compatible or incompatible.
-                    if (addon.tier > 2 && addon.compatible === null) {
-                        return; // XXX
+            function createBugElement(addon) {
+                if (addon.bug) {
+                    var bugLink = createLink(addon.bugURL, "bug " + addon.bug);
+                    if (addon.compatible) {
+                        bugLink.setAttribute("style", "text-decoration:line-through");
                     }
+                    return createElement("td", bugLink);
+                }
+                if (addon.bug === 0) {
+                    return createElement("td", document.createTextNode("no bug"));
+                }
+                var bugzillaURL = 'https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Extension%20Compatibility&rep_platform=All&op_sys=All&blocked=905436&keywords=addon-compat&short_desc="' + addon.name + '"%20add-on%20does%20not%20work%20with%20e10s&cc=cpeterson@mozilla.com';
+                var reportBugLink = createLink(bugzillaURL, "Report bug");
 
+                var mailtoURL = 'mailto:cpeterson@mozilla.com?subject="' + addon.name + '" add-on works with e10s!&body=Add-on:%0A' + addon.name + '%0A%0AUser-Agent:%0A' + encodeURIComponent(navigator.userAgent);
+                var itWorksLink = createLink(mailtoURL, 'it works');
+
+                var td = createElement("td");
+                td.appendChild(reportBugLink);
+                td.appendChild(document.createTextNode(" or "));
+                td.appendChild(itWorksLink);
+                return td;
+            }
+
+            function appendAddonRows(tbody, addons) {
+                var fragment = document.createDocumentFragment();
+                _.forEach(addons, function(addon) {
+                    var compatible, style;
                     if (addon.compatible) {
                         compatible = "yes";
                         style = "success"; // green
-                        fragment = goodAddonsFragment;
                     } else if (addon.compatible === null) {
                         compatible = "not tested";
                         style = "warning"; // yellow
-                        fragment = untestedAddonsFragment;
                     } else {
                         compatible = "not yet";
                         style = "danger"; // red
-                        fragment = badAddonsFragment;
                     }
 
                     var tr = document.createElement("tr");
                     tr.setAttribute("class", style);
-
                     tr.appendChild(createElement("td", createLink(addon.amoURL, decodeURIComponent(addon.name))));
                     tr.appendChild(createElement("td", compatible));
-
-                    if (addon.bug) {
-                        var bugLink = createLink(addon.bugURL, "bug " + addon.bug);
-                        if (addon.compatible) {
-                            bugLink.setAttribute("style", "text-decoration:line-through");
-                        }
-                        tr.appendChild(createElement("td", bugLink));
-                    } else if (addon.bug === 0) {
-                        tr.appendChild(createElement("td", document.createTextNode("no bug")));
-                    } else {
-                        var bugzillaURL = 'https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Extension%20Compatibility&rep_platform=All&op_sys=All&blocked=905436&keywords=addon-compat&short_desc="' + addon.name + '"%20add-on%20does%20not%20work%20with%20e10s&cc=cpeterson@mozilla.com';
-                        var reportBugLink = createLink(bugzillaURL, "Report bug");
-
-                        var mailtoURL = 'mailto:cpeterson@mozilla.com?subject="' + addon.name + '" add-on works with e10s!&body=Add-on:%0A' + addon.name + '%0A%0AUser-Agent:%0A' + encodeURIComponent(navigator.userAgent);
-                        var itWorksLink = createLink(mailtoURL, 'it works');
-
-                        var td = createElement("td");
-                        td.appendChild(reportBugLink);
-                        td.appendChild(document.createTextNode(" or "));
-                        td.appendChild(itWorksLink);
-                        tr.appendChild(td);
-                    }
-
+                    tr.appendChild(createBugElement(addon));
                     fragment.appendChild(tr);
                 });
+                tbody.appendChild(fragment);
+            }
+
+            $addons.parseSpreadsheet(json, function(error, addons) {
+                var goodAddons = [];
+                var untestedAddons = [];
+                var badAddons = [];
+
+                _.forEach(addons, function(addon) {
+                    // Display all tier 1 addons, but only tier 2 and 3 addons that are known compatible or incompatible.
+                    if (addon.tier > 1 && addon.compatible === null) {
+                        return; // XXX
+                    }
+
+                    var array;
+                    if (addon.compatible) {
+                        array = goodAddons;
+                    } else if (addon.compatible === null) {
+                        array = untestedAddons;
+                    } else {
+                        array = badAddons;
+                    }
+                    array.push(addon);
+                });
+
+                sortByName(goodAddons);
+                shuffleArray(untestedAddons);
+                sortByName(badAddons);
 
                 var tbody = document.getElementById("tbody");
-                tbody.appendChild(goodAddonsFragment);
-                tbody.appendChild(badAddonsFragment);
-                tbody.appendChild(untestedAddonsFragment);
+                appendAddonRows(tbody, goodAddons);
+                appendAddonRows(tbody, untestedAddons);
+                appendAddonRows(tbody, badAddons);
             });
         }
     };

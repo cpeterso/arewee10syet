@@ -20,34 +20,49 @@ var $index = (function() {
                 return element;
             }
 
-            $addons.parseSpreadsheet(json, function(error, addons) {
-                var compatible, fragment, style;
-                var goodAddons = document.createDocumentFragment();
-                var badAddons = document.createDocumentFragment();
-                var untestedAddons = document.createDocumentFragment();
+            function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+                return array;
+            }
 
-                addons.sort(function(a, b) {
+            function sortByName(array) {
+                array.sort(function(a, b) {
                     return a.name < b.name ? -1 : (a.name === b.name ? 0 : 1);
                 });
+            }
+
+            $addons.parseSpreadsheet(json, function(error, addons) {
+                var compatible, fragment, style;
+                var goodAddonsFragment = document.createDocumentFragment();
+                var badAddonsFragment = document.createDocumentFragment();
+                var untestedAddonsFragment = document.createDocumentFragment();
+
+                shuffleArray(addons);
+                //sortByName(addons);
 
                 _.forEach(addons, function(addon) {
-                    // Display all tier 1 addons, but only tier 2 and 3 addons that are known compatible or incompatible.
-                    if (addon.tier > 1 && addon.compatible === null) {
+                    // Display all tier 1 and 2 addons, but only tier 3 addons that are known compatible or incompatible.
+                    if (addon.tier > 2 && addon.compatible === null) {
                         return; // XXX
                     }
 
                     if (addon.compatible) {
                         compatible = "yes";
                         style = "success"; // green
-                        fragment = goodAddons;
+                        fragment = goodAddonsFragment;
                     } else if (addon.compatible === null) {
                         compatible = "not tested";
                         style = "warning"; // yellow
-                        fragment = untestedAddons;
+                        fragment = untestedAddonsFragment;
                     } else {
                         compatible = "not yet";
                         style = "danger"; // red
-                        fragment = badAddons;
+                        fragment = badAddonsFragment;
                     }
 
                     var tr = document.createElement("tr");
@@ -82,9 +97,9 @@ var $index = (function() {
                 });
 
                 var tbody = document.getElementById("tbody");
-                tbody.appendChild(goodAddons);
-                tbody.appendChild(badAddons);
-                tbody.appendChild(untestedAddons);
+                tbody.appendChild(goodAddonsFragment);
+                tbody.appendChild(badAddonsFragment);
+                tbody.appendChild(untestedAddonsFragment);
             });
         }
     };

@@ -65,13 +65,13 @@ var $index = (function() {
                 _.forEach(addons, function(addon) {
                     var compatible, style;
                     if (addon.compatible) {
-                        compatible = "yes";
+                        compatible = "compatible";
                         style = "success"; // green
                     } else if (addon.compatible === null) {
                         compatible = "not tested";
                         style = "warning"; // yellow
                     } else {
-                        compatible = "not yet";
+                        compatible = "bug reported";
                         style = "danger"; // red
                     }
 

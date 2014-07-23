@@ -92,7 +92,7 @@ var $index = (function() {
 
                 _.forEach(addons, function(addon) {
                     // Display all tier 1 addons, but only tier 2 and 3 addons that are known compatible or incompatible.
-                    if (addon.tier > 1 && addon.compatible === null) {
+                    if (addon.tier > 2 && addon.compatible === null) {
                         return; // XXX
                     }
 

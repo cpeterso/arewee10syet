@@ -1,7 +1,7 @@
-"use strict";
+;(function(exports) {
+    "use strict";
 
-var $index = (function() {
-    return {
+    exports.$index = {
         onSpreadsheet: function(json) {
             function createElement(tag, child) {
                 var element = document.createElement(tag);
@@ -118,4 +118,4 @@ var $index = (function() {
             });
         }
     };
-})();
+})(this);

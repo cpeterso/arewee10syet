@@ -1,4 +1,4 @@
-;(function() {
+;(function(exports) {
     "use strict";
 
     // http://jquerymy.com/js/md5.js

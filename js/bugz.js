@@ -1,12 +1,12 @@
-"use strict";
+;(function(exports) {
+    "use strict";
 
-var $bugz = (function() {
     var bzClient = bz.createClient({
         username: "",
         password: "",
     });
 
-    return {
+    exports.$bugz = {
         status: {
             UNCONFIRMED: "UNCONFIRMED",
             NEW: "NEW",
@@ -31,4 +31,4 @@ var $bugz = (function() {
             bzClient.searchBugs(params, callback);
         }
     };
-})();
+})(this);

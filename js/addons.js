@@ -19,7 +19,7 @@
                 compatible = null;
                 var bug = row["bug"];
                 if (typeof bug !== "undefined") {
-                    bugURL = $bugz.getURL(bug);
+                    bugURL = $bugz.makeURL(bug);
                     bug = +bug;
                     if (bug > 0) {
                         bugIDs.push(bug);

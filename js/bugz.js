@@ -24,7 +24,7 @@
             WONTFIX: "WONTFIX",
             WORKSFORME: "WORKSFORME",
         },
-        getURL: function(bugId) {
+        makeURL: function(bugId) {
             return "https://bugzilla.mozilla.org/show_bug.cgi?id=" + bugId;
         },
         searchBugs: function(params, callback) {

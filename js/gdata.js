@@ -11,8 +11,8 @@
                 var content = entry.content.$t.split(", ");
 
                 _.forEach(content, function(column) {
-                    var kv = column.split(": ");
-                    row[kv[0]] = kv[1];
+                    var [key, value] = column.split(": ");
+                    row[key] = value;
                 });
 
                 return row;

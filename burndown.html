@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Burndown</title>
+        <link rel="shortcut icon" href="/favicon.ico">
+        <link rel="stylesheet" href="js/c3-0.3.0/c3.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js" defer></script>
+        <script src="js/c3-0.3.0/c3.min.js" defer></script>
+        <script src="js/bz-0.2.4.js" defer></script>
+        <script src="js/bugz.js" defer></script>
+        <script src="js/burndown.js" defer></script>
+        </head>
+    <body>
+        <div>
+            Bugzilla Username: <input type="text" id="username" value="bugzilla@example.com">
+            Password: <input type="password" id="password" value="">
+            Bug: <input type="text" id="bug" value="997462">
+            <button id="button">Burninate</button>
+        </div>
+        <div id="chart"></div>
+    </body>
+</html>

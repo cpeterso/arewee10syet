@@ -81,15 +81,18 @@
     }
 
     function drawOpenClosed(data) {
+        var columns = [
+            ["x"].concat(data.dates),
+            ["open"].concat(data.open),
+            ["closed"].concat(data.closed),
+        ];
+        if (data.days) {
+            columns.push(["days"].concat(data.days));
+        }
         c3.generate({
             data: {
                 x: "x",
-                columns: [
-                    ["x"].concat(data.dates),
-                    ["open"].concat(data.open),
-                    ["closed"].concat(data.closed),
-                    ["days"].concat(data.days),
-                ],
+                columns: columns,
                 names: {
                     open: "Open Bugs",
                     closed: "Closed Bugs",
@@ -166,10 +169,11 @@
 
             changes = _.sortBy(changes, "date");
 
-            // six months ago
+            // chart start date
             const MS_PER_DAY = 24*60*60*1000;
             const MS_PER_MONTH = 4*7*MS_PER_DAY;
-            var chartStartDate = yyyy_mm_dd(new Date(Date.now() - 6 * MS_PER_MONTH));
+            var sixMonthsAgo = yyyy_mm_dd(new Date(Date.now() - 6 * MS_PER_MONTH));
+            var hasTimeTracking = false;
 
             _.forEach(changes, function(change) {
                 var closedBugCountDelta = change.bugsClosed.length;
@@ -177,21 +181,27 @@
 
                 var daysOpened = daysFromHours(_.reduce(change.bugsOpened, function(sum, bug) {
                     var t = bug.timeTracking;
-                    // FIXME: log warning if no timeTracking?
-                    return sum + (t ? t.currentEstimate : 0);
+                    if (!t) {
+                        return sum;
+                    }
+                    hasTimeTracking = true;
+                    return sum + t.currentEstimate;
                 }, 0));
 
                 var daysClosed = daysFromHours(_.reduce(change.bugsClosed, function(sum, bug) {
                     var t = bug.timeTracking;
-                    // FIXME: log warning if no timeTracking?
-                    return sum + (t ? t.currentEstimate : 0);
+                    if (!t) {
+                        return sum;
+                    }
+                    hasTimeTracking = true;
+                    return sum + t.currentEstimate;
                 }, 0));
 
                 runningOpenBugCount += openBugCountDelta;
                 runningClosedBugCount += closedBugCountDelta;
                 runningRemainingDays += daysOpened - daysClosed;
 
-                if (change.date >= chartStartDate) {
+                if (change.date >= sixMonthsAgo) {
                     bugDates.push(change.date);
                     openBugCounts.push(runningOpenBugCount);
                     closedBugCounts.push(runningClosedBugCount);
@@ -232,13 +242,31 @@
                 }
 
                 var futureBugCount = predictBugCount(futureDate);
-                var futureRemainingDays = predictRemainingDays(futureDate);
-
-                if (futureBugCount === 0 || futureRemainingDays === 0) {
+                if (futureBugCount === 0) {
                     bugDates.push(yyyy_mm_dd(new Date(futureDate)));
                     openBugCounts.push(futureBugCount);
-                    remainingDays.push(futureRemainingDays);
+                    if (hasTimeTracking) {
+                        var futureRemainingDays = predictRemainingDays(futureDate);
+                        remainingDays.push(futureRemainingDays);
+                    }
                     break;
+                }
+            }
+
+            if (hasTimeTracking) {
+                for (;;) {
+                    futureDate += MS_PER_DAY;
+                    if (futureDate > threeMonthsFromNow) {
+                        break;
+                    }
+
+                    var futureRemainingDays = predictRemainingDays(futureDate);
+                    if (futureRemainingDays === 0) {
+                        bugDates.push(yyyy_mm_dd(new Date(futureDate)));
+                        openBugCounts.push(0);
+                        remainingDays.push(futureRemainingDays);
+                        break;
+                    }
                 }
             }
 
@@ -246,7 +274,7 @@
                 dates: bugDates,
                 open: openBugCounts,
                 closed: closedBugCounts,
-                days: remainingDays,
+                days: (hasTimeTracking ? remainingDays : null),
             });
         });
     }

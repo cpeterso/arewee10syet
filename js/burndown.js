@@ -69,7 +69,7 @@
         return date.toISOString().slice(0,10);
     }
 
-    function burndownOpenClosed(data) {
+    function drawOpenClosed(data) {
         c3.generate({
             data: {
                 x: "x",
@@ -190,7 +190,7 @@
 
             }
 
-            burndownOpenClosed({
+            drawOpenClosed({
                 dates: bugDates,
                 open: openBugCounts,
                 closed: closedBugCounts,

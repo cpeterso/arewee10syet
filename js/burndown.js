@@ -69,6 +69,17 @@
         return date.toISOString().slice(0,10);
     }
 
+    function makeLinearRegressionFunction(xys) {
+        var line = ss.linear_regression().data(xys).line();
+        return function(x) {
+            var y = line(x);
+            if (y <= 0) {
+                return 0;
+            }
+            return Math.ceil(y);
+        };
+    }
+
     function drawOpenClosed(data) {
         c3.generate({
             data: {
@@ -188,6 +199,47 @@
                 }
             });
 
+            var todaysDate = Date.now();
+            var twoWeeksAgo = todaysDate - 2*7*MS_PER_DAY;
+
+            var bugCountInputs = [];
+            var remainingDaysInputs = [];
+
+            var i = bugDates.length - 1;
+            for (;;) {
+                if (i < 0) {
+                   break;
+                }
+                var t = Date.parse(bugDates[i]);
+                if (t < twoWeeksAgo) {
+                    break;
+                }
+                bugCountInputs.unshift([t, openBugCounts[i]]);
+                remainingDaysInputs.unshift([t, remainingDays[i]]);
+                i--;
+            }
+
+            var predictBugCount = makeLinearRegressionFunction(bugCountInputs);
+            var predictRemainingDays = makeLinearRegressionFunction(remainingDaysInputs);
+
+            var threeMonthsFromNow = todaysDate + 3*4*7*MS_PER_DAY;
+            var futureDate = todaysDate;
+
+            for (;;) {
+                futureDate += MS_PER_DAY;
+                if (futureDate > threeMonthsFromNow) {
+                    break;
+                }
+
+                var futureBugCount = predictBugCount(futureDate);
+                var futureRemainingDays = predictRemainingDays(futureDate);
+
+                if (futureBugCount === 0 || futureRemainingDays === 0) {
+                    bugDates.push(yyyy_mm_dd(new Date(futureDate)));
+                    openBugCounts.push(futureBugCount);
+                    remainingDays.push(futureRemainingDays);
+                    break;
+                }
             }
 
             drawOpenClosed({

@@ -188,14 +188,6 @@
                 }
             });
 
-            if (people > 0) {
-                var zarroDate = Date.parse(_.last(bugDates));
-                zarroDate += calendarDaysFromWorkDays(runningRemainingDays) * MS_PER_DAY / people;
-                zarroDate = yyyy_mm_dd(new Date(zarroDate));
-                bugDates.push(zarroDate);
-                openBugCounts.push(0);
-                closedBugCounts.push(runningClosedBugCount + runningOpenBugCount);
-                remainingDays.push(0);
             }
 
             burndownOpenClosed({
@@ -219,8 +211,6 @@
     }
 
     var query = parseQueryString();
-    var people = +query.people || 0;
-
     var username = document.getElementById("username");
     if (query.username) {
         username.value = query.username;

@@ -30,9 +30,11 @@
         request.send();
     }
 
-    function storyPointsFromHours(hours) {
-        if (hours <= 0) {
-            return 0;
+    function getStoryPoints(bug) {
+        // TODO: check for Points flag or p=# whiteboard tag
+        var hours = bug.estimated_time;
+        if (hours <= .5) {
+            return .5;
         }
         var days = hours / 8;
         var f1 = 1;
@@ -77,7 +79,7 @@
             originalEstimate: bug.estimated_time,
             currentEstimate: currentEstimate,
             remainingHours: bug.remaining_time,
-            storyPoints: storyPointsFromHours(bug.estimated_time), // if no Points flag or p=# whiteboard tag
+            storyPoints: getStoryPoints(bug),
         };
     }
 

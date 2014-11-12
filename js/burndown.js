@@ -297,23 +297,6 @@
                 }
             }
 
-            if (hasTimeTracking) {
-                for (;;) {
-                    futureDate += MS_PER_DAY;
-                    if (futureDate > threeMonthsFromNow) {
-                        break;
-                    }
-
-                    var futureRemainingDays = predictRemainingDays(futureDate);
-                    if (futureRemainingDays === 0) {
-                        bugDates.push(yyyy_mm_dd(new Date(futureDate)));
-                        openBugCounts.push(0);
-                        remainingDays.push(futureRemainingDays);
-                        break;
-                    }
-                }
-            }
-
             drawOpenClosed({
                 dates: bugDates,
                 open: openBugCounts,

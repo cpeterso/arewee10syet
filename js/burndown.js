@@ -203,7 +203,7 @@
                 runningClosedBugCount += closedBugCountDelta;
                 runningRemainingDays += daysOpened - daysClosed;
 
-                if (change.date >= chartStartDate) {
+                if (change.date >= sixMonthsAgo) {
                     bugDates.push(change.date);
                     openBugCounts.push(runningOpenBugCount);
                     closedBugCounts.push(runningClosedBugCount);
@@ -270,16 +270,23 @@
                         break;
                     }
                 }
-=======
-                var futureRemainingDays = predictRemainingDays(futureDate);
+            }
 
-                if (futureBugCount === 0 || futureRemainingDays === 0) {
-                    bugDates.push(yyyy_mm_dd(new Date(futureDate)));
-                    openBugCounts.push(futureBugCount);
-                    remainingDays.push(futureRemainingDays);
-                    break;
+            if (hasTimeTracking) {
+                for (;;) {
+                    futureDate += MS_PER_DAY;
+                    if (futureDate > threeMonthsFromNow) {
+                        break;
+                    }
+
+                    var futureRemainingDays = predictRemainingDays(futureDate);
+                    if (futureRemainingDays === 0) {
+                        bugDates.push(yyyy_mm_dd(new Date(futureDate)));
+                        openBugCounts.push(0);
+                        remainingDays.push(futureRemainingDays);
+                        break;
+                    }
                 }
->>>>>>> Draw linear regression predicting future bug counts and remaining days
             }
 
             drawOpenClosed({

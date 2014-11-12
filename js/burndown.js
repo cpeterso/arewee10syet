@@ -172,7 +172,7 @@
             // chart start date
             const MS_PER_DAY = 24*60*60*1000;
             const MS_PER_MONTH = 4*7*MS_PER_DAY;
-            var sixMonthsAgo = yyyy_mm_dd(new Date(Date.now() - 6 * MS_PER_MONTH));
+            var chartStartDate = yyyy_mm_dd(new Date(Date.now() - 6 * MS_PER_MONTH));
             var hasTimeTracking = false;
 
             _.forEach(changes, function(change) {
@@ -184,6 +184,7 @@
                     if (!t) {
                         return sum;
                     }
+                    // FIXME: log warning if no timeTracking?
                     hasTimeTracking = true;
                     return sum + t.currentEstimate;
                 }, 0));
@@ -193,6 +194,7 @@
                     if (!t) {
                         return sum;
                     }
+                    // FIXME: log warning if no timeTracking?
                     hasTimeTracking = true;
                     return sum + t.currentEstimate;
                 }, 0));
@@ -201,7 +203,7 @@
                 runningClosedBugCount += closedBugCountDelta;
                 runningRemainingDays += daysOpened - daysClosed;
 
-                if (change.date >= sixMonthsAgo) {
+                if (change.date >= chartStartDate) {
                     bugDates.push(change.date);
                     openBugCounts.push(runningOpenBugCount);
                     closedBugCounts.push(runningClosedBugCount);
@@ -232,7 +234,7 @@
             var predictBugCount = makeLinearRegressionFunction(bugCountInputs);
             var predictRemainingDays = makeLinearRegressionFunction(remainingDaysInputs);
 
-            var threeMonthsFromNow = todaysDate + 3*4*7*MS_PER_DAY;
+            var threeMonthsFromNow = todaysDate + 3*MS_PER_MONTH;
             var futureDate = todaysDate;
 
             for (;;) {

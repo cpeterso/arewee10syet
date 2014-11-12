@@ -13,14 +13,23 @@
     const FIREFOX_DARK_BLUE_GREY2 = "#6A7B86";
 
     const E10S_M1 = 997456;
-    const E10S_M2 = 997462;
-    const E10S_ADDONS = 905436;
     const SHUMWAY_M2= 1044759;
     const SHUMWAY_M3 = 1037568;
+    const SHUMWAY_M4 = 1037580;
+    const SHUMWAY_1_0 = 1038057;
 
-    function log(s) {
-       console.debug(s);
-    }
+    const MS_PER_DAY = 24*60*60*1000;
+    const MS_PER_WEEK = 7*MS_PER_DAY;
+    const MS_PER_MONTH = 4*MS_PER_WEEK;
+
+    function log(s) { console.debug(s); }
+
+    function days(d) { return d * MS_PER_DAY; }
+    function weeks(w) { return days(7 * w); }
+    function months(m) { return weeks(4 * m); }
+
+    var CHART_START_PERIOD = months(3);
+    var FIX_RATE_PERIOD = weeks(2);
 
     function parseQueryString() {
         // e.g. "?foo=bar&baz=qux&/"
@@ -115,15 +124,30 @@
                 x: {
                     type: "timeseries",
                     tick: {
-                        format: "%m-%d"
+                        format: "%m-%d",
                     }
                 }
             },
         });
     }
 
+/*
     function searchDependentBugs(bug) {
         $bugz.searchBugs([$bugz.field.BLOCKS, metabug], function(error, bugs) {
+// */
+
+    function plotTrackingBugs(trackingFlag, trackingFlagValue) {
+        $bugz.searchBugs([
+            trackingFlag, trackingFlagValue,
+            /*
+            "cf_tracking_e10s", "m3+",
+            "cf_tracking_e10s", "m4+",
+            "cf_tracking_e10s", "m5+",
+            "cf_tracking_e10s", "m6+",
+            "cf_tracking_e10s", "+",
+            */
+            ], function(error, bugs) {
+
             if (error) {
                 console.error("searchBugs: " + error);
                 return;
@@ -146,9 +170,12 @@
                 return change;
             }
 
-            _.forEach(bugs, function(bug) {
-//                log("bug " + bug.id + ": " + bug.reportedAt);
+            var priority = query.priority ? "P"+(query.priority|0) : null;
 
+            _.forEach(bugs, function(bug) {
+                if (priority && bug._XXX.priority !== priority) {
+                    return;
+                }
                 getChange(bug.reportedAt).bugsOpened.push(bug);
 
                 if (!bug.open) {
@@ -170,9 +197,7 @@
             changes = _.sortBy(changes, "date");
 
             // chart start date
-            const MS_PER_DAY = 24*60*60*1000;
-            const MS_PER_MONTH = 4*7*MS_PER_DAY;
-            var chartStartDate = yyyy_mm_dd(new Date(Date.now() - 6 * MS_PER_MONTH));
+            var chartStartDate = yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
             var hasTimeTracking = false;
 
             _.forEach(changes, function(change) {
@@ -203,7 +228,7 @@
                 runningClosedBugCount += closedBugCountDelta;
                 runningRemainingDays += daysOpened - daysClosed;
 
-                if (change.date >= sixMonthsAgo) {
+                if (change.date >= chartStartDate) {
                     bugDates.push(change.date);
                     openBugCounts.push(runningOpenBugCount);
                     closedBugCounts.push(runningClosedBugCount);
@@ -212,7 +237,7 @@
             });
 
             var todaysDate = Date.now();
-            var twoWeeksAgo = todaysDate - 2*7*MS_PER_DAY;
+            var fixRatePeriod = todaysDate - FIX_RATE_PERIOD;
 
             var bugCountInputs = [];
             var remainingDaysInputs = [];
@@ -223,7 +248,7 @@
                    break;
                 }
                 var t = Date.parse(bugDates[i]);
-                if (t < twoWeeksAgo) {
+                if (t < fixRatePeriod) {
                     break;
                 }
                 bugCountInputs.unshift([t, openBugCounts[i]]);
@@ -234,12 +259,12 @@
             var predictBugCount = makeLinearRegressionFunction(bugCountInputs);
             var predictRemainingDays = makeLinearRegressionFunction(remainingDaysInputs);
 
-            var threeMonthsFromNow = todaysDate + 3*MS_PER_MONTH;
+            var chartEndDate = todaysDate + months(12);
             var futureDate = todaysDate;
 
             for (;;) {
                 futureDate += MS_PER_DAY;
-                if (futureDate > threeMonthsFromNow) {
+                if (futureDate > chartEndDate) {
                     break;
                 }
 
@@ -258,7 +283,7 @@
             if (hasTimeTracking) {
                 for (;;) {
                     futureDate += MS_PER_DAY;
-                    if (futureDate > threeMonthsFromNow) {
+                    if (futureDate > chartEndDate) {
                         break;
                     }
 
@@ -305,7 +330,8 @@
                 alert(error);
                 return;
             }
-            searchDependentBugs(metabug);
+            //searchDependentBugs(metabug);
+            plotTrackingBugs("cf_tracking_e10s", tracking_e10s);
         });
     }
 
@@ -314,7 +340,6 @@
     if (query.username) {
         username.value = query.username;
     }
-    username.select();
 
     var password = document.getElementById("password");
     if (query.password) {
@@ -322,22 +347,36 @@
     }
 
     var button = document.getElementById("button");
+    button.focus();
     button.addEventListener("click", function() {
         var username = getElementValue("username");
         var password = getElementValue("password");
-        metabug = getElementValue("bug");
+        tracking_e10s = getElementValue("bug");
         if (username && password) {
             login(username, password);
         } else {
-            searchDependentBugs(metabug);
+            //searchDependentBugs(metabug);
+            plotTrackingBugs("cf_tracking_e10s", tracking_e10s);
         }
     });
 
+    var tracking_e10s = query["tracking-e10s"];
+    if (tracking_e10s) {
+        plotTrackingBugs("cf_tracking_e10s", tracking_e10s);
+    } else {
+        tracking_e10s = "m3+";
+    }
+
+/*
     var metabug = query.bug|0 || query.id|0;
     if (metabug) {
         searchDependentBugs(metabug);
     } else {
         metabug = E10S_M2;
     }
-    button.value = metabug;
+// */
+
+    var bugField = document.getElementById("bug");
+    bugField.value = tracking_e10s;
+    document.title = "Burndown: " + tracking_e10s;
 })(this);

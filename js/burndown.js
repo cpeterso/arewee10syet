@@ -270,6 +270,16 @@
                         break;
                     }
                 }
+=======
+                var futureRemainingDays = predictRemainingDays(futureDate);
+
+                if (futureBugCount === 0 || futureRemainingDays === 0) {
+                    bugDates.push(yyyy_mm_dd(new Date(futureDate)));
+                    openBugCounts.push(futureBugCount);
+                    remainingDays.push(futureRemainingDays);
+                    break;
+                }
+>>>>>>> Draw linear regression predicting future bug counts and remaining days
             }
 
             drawOpenClosed({

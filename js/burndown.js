@@ -12,7 +12,6 @@
     const FIREFOX_DARK_BLUE_GREY1 = "#424F5A";
     const FIREFOX_DARK_BLUE_GREY2 = "#6A7B86";
 
-    const E10S_M1 = 997456;
     const SHUMWAY_M2= 1044759;
     const SHUMWAY_M3 = 1037568;
     const SHUMWAY_M4 = 1037580;
@@ -28,8 +27,9 @@
     function weeks(w) { return days(7 * w); }
     function months(m) { return weeks(4 * m); }
 
-    var CHART_START_PERIOD = months(3);
-    var FIX_RATE_PERIOD = weeks(2);
+    const CHART_START_PERIOD = months(12);
+    const CHART_END_PERIOD = months(12);
+    const FIX_RATE_PERIOD = months(2);
 
     function parseQueryString() {
         // e.g. "?foo=bar&baz=qux&/"
@@ -131,23 +131,13 @@
         });
     }
 
-/*
-    function searchDependentBugs(bug) {
-        $bugz.searchBugs([$bugz.field.BLOCKS, metabug], function(error, bugs) {
-// */
+    function plotTrackingBugs(trackingFlagsAndValues) {
+        var t0 = Date.now();
+        console.log("plotTrackingBugs: " + trackingFlagsAndValues);
 
-    function plotTrackingBugs(trackingFlag, trackingFlagValue) {
-        $bugz.searchBugs([
-            trackingFlag, trackingFlagValue,
-            /*
-            "cf_tracking_e10s", "m3+",
-            "cf_tracking_e10s", "m4+",
-            "cf_tracking_e10s", "m5+",
-            "cf_tracking_e10s", "m6+",
-            "cf_tracking_e10s", "+",
-            */
-            ], function(error, bugs) {
-
+        $bugz.searchBugs(trackingFlagsAndValues, function(error, bugs) {
+            var t1 = Date.now();
+            console.log("plotTrackingBugs: " + (t1 - t0) + " ms");
             if (error) {
                 console.error("searchBugs: " + error);
                 return;
@@ -170,18 +160,12 @@
                 return change;
             }
 
-            var priority = query.priority ? "P"+(query.priority|0) : null;
-
             _.forEach(bugs, function(bug) {
-                if (priority && bug._XXX.priority !== priority) {
-                    return;
-                }
                 getChange(bug.reportedAt).bugsOpened.push(bug);
 
                 if (!bug.open) {
                     // XXX pretend last change time is time of resolution
-                    var lastChangeTime = new Date(bug._XXX.last_change_time);
-                    getChange(lastChangeTime).bugsClosed.push(bug);
+                    getChange(bug.lastModifiedAt).bugsClosed.push(bug);
                 }
             });
 
@@ -209,7 +193,6 @@
                     if (!t) {
                         return sum;
                     }
-                    // FIXME: log warning if no timeTracking?
                     hasTimeTracking = true;
                     return sum + t.currentEstimate;
                 }, 0));
@@ -219,7 +202,6 @@
                     if (!t) {
                         return sum;
                     }
-                    // FIXME: log warning if no timeTracking?
                     hasTimeTracking = true;
                     return sum + t.currentEstimate;
                 }, 0));
@@ -237,30 +219,42 @@
             });
 
             var todaysDate = Date.now();
-            var fixRatePeriod = todaysDate - FIX_RATE_PERIOD;
 
-            var bugCountInputs = [];
-            var remainingDaysInputs = [];
+
+/*
+            const fixRatePeriod = todaysDate - FIX_RATE_PERIOD;
+            const bugCountInputs = [];
+            const remainingDaysInputs = [];
 
             var i = bugDates.length - 1;
             for (;;) {
                 if (i < 0) {
                    break;
                 }
-                var t = Date.parse(bugDates[i]);
+                const t = Date.parse(bugDates[i]);
                 if (t < fixRatePeriod) {
                     break;
                 }
-                bugCountInputs.unshift([t, openBugCounts[i]]);
+                bugCountInputs.unshift([t, closedBugCounts[i]]);
                 remainingDaysInputs.unshift([t, remainingDays[i]]);
                 i--;
             }
 
-            var predictBugCount = makeLinearRegressionFunction(bugCountInputs);
-            var predictRemainingDays = makeLinearRegressionFunction(remainingDaysInputs);
+            // fix rate:
+            const firstBugCountInput = bugCountInputs[0];
+            const lastBugCountInput = _.last(bugCountInputs);
+            const dt = (lastBugCountInput[0] - firstBugCountInput[0]) / MS_PER_DAY;
+            const db = lastBugCountInput[1] - firstBugCountInput[1];
+            log("velocity: "+db+" bugs / "+dt+" days = "+(db/dt)+" bugs closed per day");
 
-            var chartEndDate = todaysDate + months(12);
+            var predictRemainingDays = makeLinearRegressionFunction(remainingDaysInputs);
+// */
+            const E10S_VELOCITY = 2.5; // bugs closed per day from 09-14 through 11–14
+
+
+            const chartEndDate = todaysDate + CHART_END_PERIOD;
             var futureDate = todaysDate;
+            var futureBugCount = _.last(closedBugCounts);
 
             for (;;) {
                 futureDate += MS_PER_DAY;
@@ -268,8 +262,8 @@
                     break;
                 }
 
-                var futureBugCount = predictBugCount(futureDate);
-                if (futureBugCount === 0) {
+                futureBugCount = Math.max(futureBugCount - E10S_VELOCITY, 0);
+                if (futureBugCount <= 0) {
                     bugDates.push(yyyy_mm_dd(new Date(futureDate)));
                     openBugCounts.push(futureBugCount);
                     if (hasTimeTracking) {
@@ -280,6 +274,7 @@
                 }
             }
 
+            // If time-tracking estimate exceeds bug velocity estimate, keep drawing.
             if (hasTimeTracking) {
                 for (;;) {
                     futureDate += MS_PER_DAY;
@@ -313,7 +308,6 @@
                 alert(error);
                 return;
             }
-            //searchDependentBugs(metabug);
             plotTrackingBugs("cf_tracking_e10s", tracking_e10s);
         });
     }
@@ -338,17 +332,21 @@
         if (username && password) {
             login(username, password);
         } else {
-            //searchDependentBugs(metabug);
             plotTrackingBugs("cf_tracking_e10s", tracking_e10s);
         }
     });
 
-    var tracking_e10s = query["tracking-e10s"];
-    if (tracking_e10s) {
-        plotTrackingBugs("cf_tracking_e10s", tracking_e10s);
-    } else {
-        tracking_e10s = "m3+";
-    }
+    var tracking_e10s = query["tracking-e10s"] || "m2+,m3+,m4+";
+    log("tracking_e10s: "+tracking_e10s);
+    var milestones = tracking_e10s.split(",");
+    var trackingFlagsAndValues = _.reduce(milestones, function(array, milestone) {
+        log("milestone: "+milestone);
+        array.push("cf_tracking_e10s", milestone);
+        return array;
+    }, []);
+    log("trackingFlagsAndValues: "+trackingFlagsAndValues);
+
+    plotTrackingBugs(trackingFlagsAndValues);
 
 /*
     var metabug = query.bug|0 || query.id|0;

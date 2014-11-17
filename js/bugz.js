@@ -132,18 +132,22 @@
 
     function materializeBug(bug) {
         return {
+            /*
             assignedTo: materializePerson(bug.assigned_to_detail),
             blockingFlags: materializeBlockingFlags(bug),
             blocks: bug.blocks,
             component: bug.component,
             dependsOn: bug.depends_on,
             dupeOf: bug.dupe_of,
+            */
             id: bug.id,
-            keywords: bug.keywords,
+            //keywords: bug.keywords,
             open: bug.is_open,
-            os: bug.op_sys,
-            product: bug.product,
+            //os: bug.op_sys,
+            //product: bug.product,
             reportedAt: new Date(bug.creation_time),
+            lastModifiedAt: new Date(bug.last_change_time),
+            /*
             reporter: materializePerson(bug.creator_detail),
             resolution: bug.resolution,
             summary: bug.summary,
@@ -152,6 +156,7 @@
             timeTracking: materializeTimeTracking(bug),
             trackingFlags: materializeTrackingFlags(bug),
             whiteboard: bug.whiteboard, // TODO: parse whiteboard tags?
+            */
             _XXX: bug, // escape hatch to original bug object
         };
     }
@@ -166,9 +171,11 @@
         if (loginToken) {
             url.push("&token=", loginToken);
         }
+
         // Must use exclude_fields because we can't include_fields all cf_status_* or cf_tracking_* flags by name.
-        url.push("&exclude_fields=alias,cc,cf_crash_signature,cf_qa_whiteboard,cf_user_story,classification,flags,groups,is_cc_accessible,is_confirmed,is_creator_accessible,platform,priority,qa_contact,see_also,severity,target_milestone,url,version");
-        // last_change_time?
+        //url.push("&exclude_fields=alias,cc,cf_crash_signature,cf_qa_whiteboard,cf_user_story,classification,flags,groups,is_cc_accessible,is_confirmed,is_creator_accessible,platform,priority,qa_contact,see_also,severity,target_milestone,url,version");
+        url.push("&include_fields=id,is_open,creation_time,last_change_time,cf_tracking_e10s");
+
         url = url.join("");
         xhr(url, function(error, response) {
             if (error) {

@@ -77,7 +77,7 @@
 
                     var tr = document.createElement("tr");
                     tr.setAttribute("class", style);
-                    tr.appendChild(createElement("td", createLink(addon.amoURL, decodeURIComponent(addon.name))));
+                    tr.appendChild(createElement("td", createLink(addon.URL, decodeURIComponent(addon.name))));
                     tr.appendChild(createElement("td", compatible));
                     tr.appendChild(createBugElement(addon));
                     fragment.appendChild(tr);
@@ -91,13 +91,6 @@
                 var badAddons = [];
 
                 _.forEach(addons, function(addon) {
-                    // Display all tier 1 addons, but only tier 2 and 3 addons that are known compatible or incompatible.
-                    /*
-                    if (addon.tier > 2 && addon.compatible === null) {
-                        return; // XXX
-                    }
-                    // */
-
                     var array;
                     if (addon.compatible) {
                         array = goodAddons;

@@ -10,9 +10,8 @@
             var rows = $gdata.parseSpreadsheet(json);
 
             var addons = _.map(rows, function(row) {
-                // e.g. "bug: 1002880, reason: AMO #8, amourl: https://addons.mozilla.org/en-US/firefox/addon/wot-safe-browsing-tool"
+                // e.g. "bug: 1002880, reason: AMO #8, url: https://addons.mozilla.org/en-US/firefox/addon/wot-safe-browsing-tool"
                 var name = row.title;
-                var tier = +row.tier;
                 var notes = row["notes"];
 
                 bugURL = null;
@@ -33,13 +32,13 @@
                     date = Date.parse(date);
                 }
 
-                var amoURL = row["amourl"];
-                if (!amoURL) {
-                    //amoURL = "https://addons.mozilla.org/en-US/firefox/search/?q=" + name;
-                    amoURL = "https://www.google.com/search?btnI=1&q=site%3Aaddons.mozilla.org+" + name;
+                var URL = row["url"];
+                if (!URL) {
+                    //URL = "https://addons.mozilla.org/en-US/firefox/search/?q=" + name;
+                    URL = "https://www.google.com/search?btnI=1&q=site%3Aaddons.mozilla.org+" + name;
                 }
 
-                var addon = {name:name, tier:tier, amoURL:amoURL, date:date, compatible:compatible, bug:bug, bugURL:bugURL, notes:notes};
+                var addon = {name:name, URL:URL, date:date, compatible:compatible, bug:bug, bugURL:bugURL, notes:notes};
                 if (bug) {
                     bugToAddonMap[bug] = addon;
                 }

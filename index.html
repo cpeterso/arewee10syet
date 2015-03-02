@@ -24,11 +24,9 @@
             <ol>
                 <li><a href="https://nightly.mozilla.org/">Install Firefox Nightly</a>.</li>
                 <li>Install the add-on you would like to test.</li>
-                <li>e10s is disabled by default. Confirm that the add-on works in Firefox Nightly as expected <i>before</i> enabling e10s.</li>
-                <li>Now enable e10s by setting the <a href="http://kb.mozillazine.org/About:config">about:config</a> pref <tt>browser.tabs.remote.autostart</tt> to true.</li>
-                <li>Restart Firefox Nightly. When e10s is enabled, Firefox's tab titles will be <u>underlined</u>.</li>
-                <li>Confirm that the add-on still works as expected with e10s.</li>
-                <li>If you would like to disable e10s, reset the <a href="http://kb.mozillazine.org/About:config">about:config</a> pref <tt>browser.tabs.remote.autostart</tt> to false and restart Firefox.</li>
+                <li>e10s is enabled by default in Firefox Nightly, but disabled in Firefox's other release channels: Developer Edition, Beta, and Release. When e10s is enabled, Firefox's tab titles will be <u>underlined</u>.</li>
+                <li>Confirm that the add-on works as expected in Firefox's Release channel <i>before</i> testing Nightly. :)</li>
+                <li>Confirm that the add-on still works as expected with e10s in the Nightly channel.</li>
             </ol>
             <p><b>If the add-on works as expected,</b> click the add-on's "it works" link below to tell Mozilla!</p>
             <p><b>If the add-on does not work as expected with e10s,</b> click the add-on's "Report bug" link below. Please include a description of what you <i>expected</i> to happen, what actually happened, and steps to reproduce the problem.</p>

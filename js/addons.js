@@ -23,7 +23,7 @@
                     if (bug > 0) {
                         bugIDs.push(bug);
                     } else {
-                        compatible = true;
+                        compatible = (bug !== -1);
                     }
                 }
 

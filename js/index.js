@@ -37,15 +37,15 @@
             }
 
             function createBugElement(addon) {
+                if (addon.bug === 0 || addon.bug === -1) {
+                    return createElement("td"); // no bug number
+                }
                 if (addon.bug) {
                     var bugLink = createLink(addon.bugURL, "bug " + addon.bug);
                     if (addon.compatible) {
                         bugLink.setAttribute("style", "text-decoration:line-through");
                     }
                     return createElement("td", bugLink);
-                }
-                if (addon.bug === 0) {
-                    return createElement("td", document.createTextNode("no bug"));
                 }
                 var bugzillaURL = 'https://bugzilla.mozilla.org/enter_bug.cgi?format=__default__&product=Firefox&component=Extension%20Compatibility&blocked=905436&keywords=addon-compat&short_desc="' + addon.name + '"%20add-on%20does%20not%20work%20with%20e10s&cc=cpeterson@mozilla.com,jmathies@mozilla.com,lshapiro@mozilla.com&';
                 var reportBugLink = createLink(bugzillaURL, "Report bug");

@@ -2,7 +2,7 @@
     "use strict";
 
     exports.$index = {
-            onSpreadsheet: function(json) {
+        onSpreadsheet: function(json) {
             function createElement(tag, child) {
                 var element = document.createElement(tag);
                 if (typeof child !== "undefined") {
@@ -29,7 +29,7 @@
                 }
                 return array;
             }
-            
+
             function sortByUsers(array) {
                 array.sort(function(a, b) {
                     return b.users - a.users;
@@ -59,7 +59,7 @@
                 td.appendChild(itWorksLink);
                 return td;
             }
-                
+
             function appendAddonRows(tbody, addons) {
                 var fragment = document.createDocumentFragment();
                 _.forEach(addons, function(addon) {
@@ -93,8 +93,7 @@
             var untestedCount = 0;
             var brokenCount = 0;
             // var slowCount = 0;
-                      
-              
+
             $addons.parseSpreadsheet(json, function(error, addons) {
                 var goodAddons = [];
                 var untestedAddons = [];
@@ -105,18 +104,16 @@
                     var array;
                     if (addon.users > 0) {
                         array = popularAddons;
+                    } else if (addon.compatible) {
+                        array = goodAddons;
+                    } else if (addon.compatible === null) {
+                        array = untestedAddons;
+                    } else {
+                        array = badAddons;
                     }
-                    else
-                        if (addon.compatible) {
-                            array = goodAddons;
-                        } else if (addon.compatible === null) {
-                            array = untestedAddons;
-                        } else {
-                            array = badAddons;
-                        }
                     array.push(addon);
                 });
-                
+
                 sortByUsers(popularAddons);
                 shuffleArray(untestedAddons);
                 sortByUsers(goodAddons);
@@ -127,48 +124,47 @@
                 appendAddonRows(tbody, untestedAddons);
                 appendAddonRows(tbody, goodAddons);
                 appendAddonRows(tbody, badAddons);
-                
-            
-            var tbl = document.getElementById("statuscountbody");
-            
-            var count = compatCount.toString();
-            var fragment = document.createDocumentFragment();
-            var tr = document.createElement("tr");
-            tbl.appendChild(fragment);
-            tr.setAttribute("class", "success"); // green
-            tr.appendChild(createElement("td", "Compatible"));
-            tr.appendChild(createElement("td", count));
-            fragment.appendChild(tr);
-            tbl.appendChild(fragment);
-            
-            // place holder for fourth state
-            // var count = slow.toString();
-            // var fragment = document.createDocumentFragment();
-            // var tr = document.createElement("tr");
-            // tbl.appendChild(fragment);
-            // tr.style.backgroundColor = "#E5E4E2"; // grey
-            // tr.appendChild(createElement("td", "Slow"));
-            // tr.appendChild(createElement("td", "???"));
-            // fragment.appendChild(tr);
-            // tbl.appendChild(fragment);
-              
-            var count = brokenCount.toString();
-            var fragment = document.createDocumentFragment();
-            var tr = document.createElement("tr");
-            tr.setAttribute("class", "danger"); // red
-            tr.appendChild(createElement("td", "Broken"));
-            tr.appendChild(createElement("td", count));
-            fragment.appendChild(tr);
-            tbl.appendChild(fragment);
-            
-            var count = untestedCount.toString();
-            var fragment = document.createDocumentFragment();
-            var tr = document.createElement("tr");
-            tr.setAttribute("class", "warning"); // yellow
-            tr.appendChild(createElement("td", "Untested"));
-            tr.appendChild(createElement("td", count));
-            fragment.appendChild(tr);
-            tbl.appendChild(fragment);
+
+                var tbl = document.getElementById("statuscountbody");
+
+                var count = compatCount.toString();
+                var fragment = document.createDocumentFragment();
+                var tr = document.createElement("tr");
+                tbl.appendChild(fragment);
+                tr.setAttribute("class", "success"); // green
+                tr.appendChild(createElement("td", "Compatible"));
+                tr.appendChild(createElement("td", count));
+                fragment.appendChild(tr);
+                tbl.appendChild(fragment);
+
+                // place holder for fourth state
+                // var count = slow.toString();
+                // var fragment = document.createDocumentFragment();
+                // var tr = document.createElement("tr");
+                // tbl.appendChild(fragment);
+                // tr.style.backgroundColor = "#E5E4E2"; // grey
+                // tr.appendChild(createElement("td", "Slow"));
+                // tr.appendChild(createElement("td", "???"));
+                // fragment.appendChild(tr);
+                // tbl.appendChild(fragment);
+
+                var count = brokenCount.toString();
+                var fragment = document.createDocumentFragment();
+                var tr = document.createElement("tr");
+                tr.setAttribute("class", "danger"); // red
+                tr.appendChild(createElement("td", "Broken"));
+                tr.appendChild(createElement("td", count));
+                fragment.appendChild(tr);
+                tbl.appendChild(fragment);
+
+                var count = untestedCount.toString();
+                var fragment = document.createDocumentFragment();
+                var tr = document.createElement("tr");
+                tr.setAttribute("class", "warning"); // yellow
+                tr.appendChild(createElement("td", "Untested"));
+                tr.appendChild(createElement("td", count));
+                fragment.appendChild(tr);
+                tbl.appendChild(fragment);
             });
         }
     };

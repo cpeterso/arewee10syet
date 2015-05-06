@@ -7,12 +7,13 @@
             var compatible;
             var bugIDs = [];
             var bugToAddonMap = {};
+            var popularUsers;
             var rows = $gdata.parseSpreadsheet(json);
-
             var addons = _.map(rows, function(row) {
-                // e.g. "bug: 1002880, reason: AMO #8, url: https://addons.mozilla.org/en-US/firefox/addon/wot-safe-browsing-tool"
+                // e.g. "bug: 1002880, reason: AMO #8, url: https://addons.mozilla.org/en-US/firefox/addon/wot-safe-browsing-tool : Users"
                 var name = row.title;
                 var notes = row["notes"];
+                var users = row["users"];
 
                 bugURL = null;
                 compatible = null;
@@ -38,11 +39,11 @@
                     URL = "https://www.google.com/search?btnI=1&q=site%3Aaddons.mozilla.org+" + name;
                 }
 
-                var addon = {name:name, URL:URL, date:date, compatible:compatible, bug:bug, bugURL:bugURL, notes:notes};
+                var addon = {name:name, URL:URL, date:date, compatible:compatible, bug:bug, bugURL:bugURL, notes:notes, users:users};
                 if (bug) {
                     bugToAddonMap[bug] = addon;
                 }
-
+                
                 return addon;
             });
 

@@ -15,29 +15,43 @@
         <script src="js/gdata.js" defer></script>
         <script src="js/addons.js" defer></script>
         <script src="js/index.js" defer></script>
+        <!-- prod version of spreadsheet:-->
         <script src="https://spreadsheets.google.com/feeds/list/1CXdwQqNm5nqBDDfZcEoG90SLHAtb-mfMH4eAjDrFAMY/1/public/values?alt=json-in-script&amp;callback=$index.onSpreadsheet" defer></script>
+        <!-- work version of spreadsheet:
+        <script src="https://spreadsheets.google.com/feeds/list/12QwTGhqiBPSTtl9k9WztRDXgqzu1brLYYxCGzRbl04o/1/public/values?alt=json-in-script&amp;callback=$index.onSpreadsheet" defer></script>-->  
         </head>
     <body>
         <div class="col-md-4">
             <h1>Are your add-ons e10s compatible?</h1>
             <p>To test an add-on:</p>
             <ol>
+                 <li>Confirm that the add-on works as expected in Firefox's Release channel <i>before</i> testing Nightly. :)</li>
                 <li><a href="https://nightly.mozilla.org/">Install Firefox Nightly</a>.</li>
                 <li>Install the add-on you would like to test.</li>
-                <li>e10s is enabled by default in Firefox Nightly, but disabled in Firefox's other release channels: Developer Edition, Beta, and Release. When e10s is enabled, Firefox's tab titles will be <u>underlined</u>.</li>
-                <li>Confirm that the add-on works as expected in Firefox's Release channel <i>before</i> testing Nightly. :)</li>
+                <li>e10s is enabled by default in Firefox Nightly, but disabled in Firefox's other release channels: Developer Edition, Beta, and Release. When e10s is enabled, Firefox's tab tool tip is suffixed with "- e10s".</li>
                 <li>Confirm that the add-on still works as expected with e10s in the Nightly channel.</li>
             </ol>
-            <p><b>If the add-on works as expected,</b> click the add-on's "it works" link below to tell Mozilla!</p>
-            <p><b>If the add-on does not work as expected with e10s,</b> click the add-on's "Report bug" link below. Please include a description of what you <i>expected</i> to happen, what actually happened, and steps to reproduce the problem.</p>
+            <p><b>If the add-on works as expected,</b> click the add-on's "it works" link to tell Mozilla!</p>
+            <p><b>If the add-on does not work as expected with e10s,</b> click the add-on's "Report bug" link. Please include a description of what you <i>expected</i> to happen, what actually happened, and steps to reproduce the problem.</p>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Compatibility </th>
+                        <th># in this state </th>
+                    </tr>
+                </thead>
+                <tbody id="statuscountbody">
+                </tbody>
+            </table>
         </div>
         <div class="col-md-7">
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Addon</th>
-                        <th>Compatible?</th>
-                        <th>Bug #</th>
+                        <th>Addon </th>
+                        <th>Compatibilty? </th>
+                        <th>Bugzilla report # </th>
+                        <th>Popularity </th>
                     </tr>
                 </thead>
                 <tbody id="tbody">

@@ -75,13 +75,13 @@
                             shimmedCount++;
                         }
                     } else if (addon.compatible === null) {
-                            compatible = "not tested";
-                            style = "info"; // blue
-                            untestedCount++;
+                        compatible = "not tested";
+                        style = "info"; // blue
+                        untestedCount++;
                     } else {
-                            compatible = "bug reported";
-                            style = "danger"; // red
-                            brokenCount++;
+                        compatible = "bug reported";
+                        style = "danger"; // red
+                        brokenCount++;
                     }
                     
                     var tr = document.createElement("tr");

@@ -14,6 +14,8 @@
                 var name = row.title;
                 var notes = row["notes"];
                 var users = row["users"];
+                var shimmed = row["shimmed"];
+                var cpow = row["cpow"];
 
                 bugURL = null;
                 compatible = null;
@@ -39,7 +41,7 @@
                     URL = "https://www.google.com/search?btnI=1&q=site%3Aaddons.mozilla.org+" + name;
                 }
 
-                var addon = {name:name, URL:URL, date:date, compatible:compatible, bug:bug, bugURL:bugURL, notes:notes, users:users};
+                var addon = {name:name, URL:URL, date:date, compatible:compatible, bug:bug, bugURL:bugURL, notes:notes, users:users, shimmed:shimmed, cpow:cpow};
                 if (bug) {
                     bugToAddonMap[bug] = addon;
                 }

@@ -116,8 +116,6 @@
                         array = goodAddons;
                     } else if (addon.compatible === null) {
                         array = untestedAddons;
-                    } else {
-                        array = badAddons;
                     }
                     else
                         if (addon.compatible) {

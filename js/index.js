@@ -47,10 +47,10 @@
                     }
                     return createElement("td", bugLink);
                 }
-                var bugzillaURL = 'https://bugzilla.mozilla.org/enter_bug.cgi?format=__default__&product=Firefox&component=Extension%20Compatibility&blocked=905436&keywords=addon-compat&short_desc="' + addon.name + '"%20add-on%20does%20not%20work%20with%20e10s&cc=cpeterson@mozilla.com,jmathies@mozilla.com,lshapiro@mozilla.com&';
+                var bugzillaURL = 'https://bugzilla.mozilla.org/enter_bug.cgi?format=__default__&product=Firefox&component=Extension%20Compatibility&blocked=905436&keywords=addon-compat&short_desc="' + addon.name + '"%20add-on%20does%20not%20work%20with%20e10s&cc=twalker@mozilla.com,jmathies@mozilla.com,lshapiro@mozilla.com,cpeterson@mozilla.com&';
                 var reportBugLink = createLink(bugzillaURL, "Report bug");
 
-                var mailtoURL = 'mailto:cpeterson@mozilla.com?cc=jmathies@mozilla.com,lshapiro@mozilla.com,twalker@mozilla.com&subject="' + addon.name + '" add-on works with e10s!&body=Add-on:%0A' + addon.name + '%0A%0AUser-Agent:%0A' + encodeURIComponent(navigator.userAgent);
+                var mailtoURL = 'mailto:twalker@mozilla.com?cc=jmathies@mozilla.com,lshapiro@mozilla.com,cpeterson@mozilla.com&subject="' + addon.name + '" add-on works with e10s!&body=Add-on:%0A' + addon.name + '%0A%0AUser-Agent:%0A' + encodeURIComponent(navigator.userAgent);
                 var itWorksLink = createLink(mailtoURL, 'it works');
 
                 var td = createElement("td");
